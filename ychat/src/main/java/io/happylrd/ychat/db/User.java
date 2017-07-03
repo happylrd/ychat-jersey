@@ -1,12 +1,16 @@
 package io.happylrd.ychat.db;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+@Entity
 @Table(name = "USER")
 public class User {
 
@@ -48,6 +52,19 @@ public class User {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updateAt = LocalDateTime.now();
+
+    // 我关注的人的列表
+    @JoinColumn(name = "originId")
+    // 懒加载，默认加载User信息的时候，并不查询这个集合
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<UserFollow> following = new HashSet<>();
+
+    // 关注我的人的列表
+    @JoinColumn(name = "targetId")
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<UserFollow> followers = new HashSet<>();
 
     @Column
     private LocalDateTime lastReceivedAt = LocalDateTime.now();
@@ -146,5 +163,21 @@ public class User {
 
     public void setLastReceivedAt(LocalDateTime lastReceivedAt) {
         this.lastReceivedAt = lastReceivedAt;
+    }
+
+    public Set<UserFollow> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<UserFollow> following) {
+        this.following = following;
+    }
+
+    public Set<UserFollow> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<UserFollow> followers) {
+        this.followers = followers;
     }
 }
