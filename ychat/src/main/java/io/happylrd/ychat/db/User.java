@@ -58,8 +58,9 @@ public class User {
 
     // 我关注的人的列表
     @JoinColumn(name = "originId")
-    // 懒加载，默认加载User信息的时候，并不查询这个集合
+    // 懒加载集合方式为尽可能地不加载具体的数据，当访问.size()时仅仅查询数量，不加载具体的信息
     @LazyCollection(LazyCollectionOption.EXTRA)
+    // 懒加载，默认加载User信息的时候，并不查询这个集合
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<UserFollow> following = new HashSet<>();
 
@@ -68,6 +69,11 @@ public class User {
     @LazyCollection(LazyCollectionOption.EXTRA)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<UserFollow> followers = new HashSet<>();
+
+    @JoinColumn(name = "ownerId")
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Group> groups = new HashSet<>();
 
     public String getId() {
         return id;
@@ -179,5 +185,13 @@ public class User {
 
     public void setFollowers(Set<UserFollow> followers) {
         this.followers = followers;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
     }
 }
