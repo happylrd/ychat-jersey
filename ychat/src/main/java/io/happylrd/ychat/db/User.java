@@ -53,6 +53,9 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updateAt = LocalDateTime.now();
 
+    @Column
+    private LocalDateTime lastReceivedAt = LocalDateTime.now();
+
     // 我关注的人的列表
     @JoinColumn(name = "originId")
     // 懒加载，默认加载User信息的时候，并不查询这个集合
@@ -65,9 +68,6 @@ public class User {
     @LazyCollection(LazyCollectionOption.EXTRA)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<UserFollow> followers = new HashSet<>();
-
-    @Column
-    private LocalDateTime lastReceivedAt = LocalDateTime.now();
 
     public String getId() {
         return id;
